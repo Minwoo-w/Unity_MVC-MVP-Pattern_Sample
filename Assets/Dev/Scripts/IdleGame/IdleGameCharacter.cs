@@ -7,15 +7,29 @@ namespace Dev.Scripts.IdleGame
         private bool _isAlive;
         private float _maxHealth;
         private float _currentHealth;
+        private float _damage;
 
-        public event Action<float> OnChangedHealth;
+        public event Action<float, float> OnChangedHealth;
         public event Action OnDead;
         
-        public IdleGameCharacter()
+        public IdleGameCharacter(float health, float damage)
         {
             _isAlive = true;
-            _maxHealth = 50.0f;
+            
+            _maxHealth = health;
             _currentHealth = _maxHealth;
+
+            _damage = damage;
+        }
+        
+        public float GetCurrentHealth()
+        {
+            return _currentHealth;
+        }
+        
+        public float GetMaxHealth()
+        {
+            return _maxHealth;
         }
 
         private void Dead()
@@ -32,7 +46,7 @@ namespace Dev.Scripts.IdleGame
         {
             _currentHealth -= value;
             if (_currentHealth < 0.0f) _currentHealth = 0.0f;
-            OnChangedHealth?.Invoke(_currentHealth);
+            OnChangedHealth?.Invoke(_currentHealth, _maxHealth);
             
             if (_currentHealth == 0.0f)
             {
@@ -44,7 +58,7 @@ namespace Dev.Scripts.IdleGame
         {
             _currentHealth += value;
             if (_currentHealth > _maxHealth) _currentHealth = _maxHealth;
-            OnChangedHealth?.Invoke(_currentHealth);
+            OnChangedHealth?.Invoke(_currentHealth, _maxHealth);
         }
     }
 }
