@@ -10,6 +10,7 @@ namespace Dev.Scripts.IdleGame
         private float _damage;
 
         public event Action<float, float> OnChangedHealth;
+        public event Action<float> OnHit;
         public event Action OnDead;
         
         public IdleGameCharacter(float health, float damage)
@@ -32,6 +33,38 @@ namespace Dev.Scripts.IdleGame
             return _maxHealth;
         }
 
+        public void ApplyDamage(float value)
+        {
+            var restHealth = _currentHealth - value;
+            
+            OnHit?.Invoke(value);
+            SetCurrentHealth(restHealth);
+        }
+
+        public void RecoveryHealth(float value)
+        {
+            var restHealth = _currentHealth + value;
+            SetCurrentHealth(restHealth);
+        }
+        
+        private void SetCurrentHealth(float value)
+        {
+            if (!_isAlive) return;
+            
+            _currentHealth = value;
+            
+            // Clamp Health
+            if (_currentHealth < 0.0f) _currentHealth = 0.0f;
+            else if (_currentHealth > _maxHealth) _currentHealth = _maxHealth;
+            
+            OnChangedHealth?.Invoke(_currentHealth, _maxHealth);
+            
+            if (_currentHealth == 0.0f)
+            {
+                Dead();
+            }
+        }
+        
         private void Dead()
         {
             if (!_isAlive) return;
@@ -40,25 +73,6 @@ namespace Dev.Scripts.IdleGame
             _currentHealth = 0.0f;
             
             OnDead?.Invoke();
-        }
-
-        public void ApplyDamage(float value)
-        {
-            _currentHealth -= value;
-            if (_currentHealth < 0.0f) _currentHealth = 0.0f;
-            OnChangedHealth?.Invoke(_currentHealth, _maxHealth);
-            
-            if (_currentHealth == 0.0f)
-            {
-                Dead();
-            }
-        }
-
-        public void RecoveryHealth(float value)
-        {
-            _currentHealth += value;
-            if (_currentHealth > _maxHealth) _currentHealth = _maxHealth;
-            OnChangedHealth?.Invoke(_currentHealth, _maxHealth);
         }
     }
 }

@@ -12,6 +12,7 @@
             _character = new IdleGameCharacter(50.0f, 1.0f);
 
             _character.OnChangedHealth += UpdateHealth;
+            _character.OnHit += OnHitFromCharacter;
             _character.OnDead += OnDeadFromCharacter;
             UpdateHealth(_character.GetCurrentHealth(), _character.GetMaxHealth());
         }
@@ -24,6 +25,11 @@
         private void UpdateHealth(float currentHealth, float maxHealth)
         {
             _gameView.OnUpdateHealth(currentHealth, maxHealth);
+        }
+        
+        private void OnHitFromCharacter(float value)
+        {
+            _gameView.OnHit(value);
         }
         
         private void OnDeadFromCharacter()

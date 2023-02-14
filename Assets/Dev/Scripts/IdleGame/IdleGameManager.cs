@@ -5,12 +5,12 @@ namespace Dev.Scripts.IdleGame
 {
     public class IdleGameManager : MonoBehaviour
     {
-        [SerializeField] private IdleMonsterCharacter idleMonsterCharacter;
+        [SerializeField] private IdleGameCharacterView idleGameCharacterView;
         private IdleGameController _idleGameController;
 
         private void Awake()
         {
-            _idleGameController = new IdleGameController(idleMonsterCharacter);
+            _idleGameController = new IdleGameController(idleGameCharacterView);
         }
 
         private void Update()
